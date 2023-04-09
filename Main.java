@@ -1,25 +1,26 @@
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-//import java.io.PrintWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 
 public class Main{
 
-    
+    public static PrintWriter writer;    
 
     public static void print_kb(ArrayList<ArrayList<String>> kb){
-        // print the 2D ArrayList
+        // P  rint the 2D ArrayList
         int count = 1;
         for (ArrayList<String> clause : kb) {
-            System.out.print(count++ + ". ");
+            writer.print(count++ + ". ");
             for (String literal : clause) {
-                System.out.print(literal + " ");
+                writer.print(literal + " ");
             }
-            System.out.print("{}");
-            System.out.println();
+            writer.print("{}");
+            writer.println();
         }
     }
 
@@ -40,10 +41,10 @@ public class Main{
                 kb.add(clause);
             }
         } catch (FileNotFoundException e) {
-            System.out.println("FileNotFoundException when trying to read from input file!");
+            writer.println("FileNotFoundException when trying to read from input file!");
             e.printStackTrace();
         } catch (IOException e) {
-            System.out.println("IOException when trying to read from input file!!");
+            writer.println("IOException when trying to read from input file!!");
             e.printStackTrace();
         }
 
@@ -89,7 +90,7 @@ public class Main{
 
                 //Check for contradiction
                 if(resolvent.isEmpty()){
-                    System.out.println( (int)(kb.size()+1) + ". Contradiction {" + (int)(i + 1) + ", " + (int)(j + 1) + "}");
+                    writer.println( (int)(kb.size()+1) + ". Contradiction {" + (int)(i + 1) + ", " + (int)(j + 1) + "}");
                     return true;
                 }
 
@@ -98,11 +99,11 @@ public class Main{
                     if(checkResolvent(kb, resolvent)){
                         kb.add(resolvent);
     
-                        System.out.print(kb.size() + ". ");
+                        writer.print(kb.size() + ". ");
                         for (String literal : resolvent) {
-                            System.out.print(literal + " ");
+                            writer.print(literal + " ");
                         }
-                        System.out.printf("{%d, %d}\n", i+1, j+1);
+                        writer.printf("{%d, %d}\n", i+1, j+1);
                     }
                 }
             }
@@ -165,12 +166,20 @@ public class Main{
         ArrayList<ArrayList<String>> kb = new ArrayList<ArrayList<String>>();
         
         kb = load_kb(args[0]);
+        String outputFileName = args[0].split("\\.")[0] + ".out";
+        try {
+            writer = new PrintWriter(new FileWriter(outputFileName));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         print_kb(kb);
         if(resolve(kb)){
-            System.out.println("Valid");
+            writer.println("Valid");
         } else {
-            System.out.println("Fail");
+            writer.println("Fail");
         }
+
+        writer.close();
 
     }
 }
